@@ -3,6 +3,7 @@
 ### 'PAGES' number of pages. Once a list is compiled
 ### we then ping every aIP in the list to ensure it is
 ### actually alive. Then return list of alive IP's to user.
+#!/usr/bin/python
 
 import shodan
 import pyping
@@ -13,43 +14,43 @@ APIkey = "API KEY HERE"
 SEARCH = "SEARCH TERM HERE"
 PAGES = 2
 
-## Required variables - Dont change
+### Required variables - Dont change
 ipList = []
 api = shodan.Shodan(APIkey)
 
 ###Function for scanning 'x' pages of shodan for a string
 def Shodan_Search():
-    x = 0
+    counter = 0
     print "Searching Shodan now for {}".format(SEARCH)
     try:
-        while x < PAGES:
-            print "Scanning page {}".format(x + 1)
-            results = api.search(SEARCH,page=x,limit=None)
+        while counter < PAGES:
+            print "Scanning page {}".format(counter + 1)
+            results = api.search(SEARCH,page=counter,limit=None)
             for item in results['matches']:
                 ip = item['ip_str']
                 if ip not in ipList:
                     ipList.append(ip)
                 else:
                     print "Found a doubled IP address {}".format(ip)
-                    print "Stopping at page {}".format(x)
+                    print "Stopping at page {}".format(counter)
                     break
             time.sleep(1)
-            x = x + 1
+            counter = counter + 1
     except shodan.APIError, e:
         print e
         
 def Ping_Address_List():
-    y = 0
+    pingCounter = 0
     print "Pinging each address to verify its up."
     for address in ipList:
         pingresponse = pyping.ping(address)
         if pingresponse.ret_code == 0:
-            y = y+1
+            pingCounter = pingCounter + 1
             print address
         else:
             pass
     print "Total results {}".format(len(ipList))
-    print "Total alive results: {}".format(y)
+    print "Total alive results: {}".format(pingCounter)
 
 Shodan_Search()
 Ping_Address_List()
