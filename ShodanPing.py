@@ -22,24 +22,24 @@ api = shodan.Shodan(APIkey)
 def Shodan_Search():
     counter = 0
     kill = 0
-    print "Searching Shodan now for {}".format(SEARCH)
+    print "Searching Shodan now for {}.".format(SEARCH)
     try:
         while counter < PAGES:
-            print "Scanning page {}".format(counter + 1)
             results = api.search(SEARCH,page=counter,limit=None)
             for item in results['matches']:
                 ip = item['ip_str']
                 if ip not in ipList:
                     ipList.append(ip)
                 else:
-                    #shodan reloops list after end, kill at end.
-                    print "Found a doubled IP address {}".format(ip)
+                    print "Reached end of list on page {}.".format(counter)
                     kill = 1
                     break
-            time.sleep(1)
-            counter = counter + 1
-            if kill is 1 : #kill if looped
+            if kill is 1 :
                 break
+            else:
+                print "Page {} scanned.".format(counter + 1)
+                time.sleep(1)
+                counter = counter + 1
     except shodan.APIError, e:
         print e
         
