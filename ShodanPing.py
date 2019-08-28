@@ -21,6 +21,7 @@ api = shodan.Shodan(APIkey)
 ###Function for scanning 'x' pages of shodan for a string
 def Shodan_Search():
     counter = 0
+    kill = 0
     print "Searching Shodan now for {}".format(SEARCH)
     try:
         while counter < PAGES:
@@ -31,11 +32,14 @@ def Shodan_Search():
                 if ip not in ipList:
                     ipList.append(ip)
                 else:
+                    #shodan reloops list after end, kill at end.
                     print "Found a doubled IP address {}".format(ip)
-                    print "Stopping at page {}".format(counter)
+                    kill = 1
                     break
             time.sleep(1)
             counter = counter + 1
+            if kill is 1 : #kill if looped
+                break
     except shodan.APIError, e:
         print e
         
