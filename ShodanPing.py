@@ -37,9 +37,9 @@ def Shodan_Search():
             if kill is 1 :
                 break
             else:
-                print "Page {} scanned.".format(counter + 1)
-                time.sleep(1)
                 counter = counter + 1
+                print "Page {} scanned.".format(counter)
+                time.sleep(1)
     except shodan.APIError, e:
         print e
         
